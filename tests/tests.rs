@@ -3,8 +3,8 @@ use lsm::*;
 
 #[test]
 fn test() {
-    let store = DiskStore::default();
-    let list = store.mem_table;
+    let mut store = DiskStore::default();
+    let list = &store.mem_table;
     let table = vec![
         ("key1", new_value(42)),
         ("key2", new_value(52)),
@@ -16,7 +16,8 @@ fn test() {
     for (key, value) in &table {
         list.put(key_with_ts(key, 0), value.clone());
     }
-    println!("Yoo {}",list.len())
+    println!("Yoo {}", list.len());
+    store.flush();
 }
 
 fn key_with_ts(key: &str, ts: u64) -> Bytes {

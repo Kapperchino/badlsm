@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package lsm;
+
+message KV {
+    bytes key = 1;
+    bytes val = 2;
+}
+
+message Chunk {
+    repeated KV list = 1;
+}
