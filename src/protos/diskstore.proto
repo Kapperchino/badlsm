@@ -10,3 +10,7 @@ message KV {
 message Chunk {
     repeated KV list = 1;
 }
+
+message State {
+    int32 chunk_index = 1;
+}
