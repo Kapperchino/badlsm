@@ -4,7 +4,6 @@ use lsm::*;
 #[test]
 fn test() {
     let mut store = DiskStore::default();
-    let list = &store.mem_table;
     let table = vec![
         ("key1", new_value(42)),
         ("key2", new_value(52)),
@@ -14,10 +13,13 @@ fn test() {
     ];
 
     for (key, value) in &table {
-        list.put(key_with_ts(key, 0), value.clone());
+        store.write(key_with_ts(key, 0), value.clone());
     }
-    println!("Yoo {}", list.len());
+    println!("Yoo {}", store.mem_table.len());
     store.flush();
+    //TODO: fix search
+    let val = store.read(Bytes::from("key1"));
+    println!("Yoo {:?}", val.unwrap().to_ascii_lowercase());
 }
 
 fn key_with_ts(key: &str, ts: u64) -> Bytes {
