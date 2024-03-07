@@ -3,20 +3,25 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use bytes::Bytes;
 
 pub struct ShardedTree {
-    trees: [BTreeMap<Bytes, Bytes>; 4],
+    trees: Vec<BTreeMap<Bytes, Bytes>>,
+    shards: usize,
 }
 
 impl ShardedTree {
-    pub fn put(&self, key: Bytes, val: Bytes) {
-        let mut hasher = DefaultHasher::new();
-        key.hash(&mut hasher);
-        let i = hasher.finish();
-        self.trees[i % 4].insert(key, val);
+    pub fn new(shards: usize) -> Self {
+        let mut maps: Vec<BTreeMap<Bytes, Bytes>> = Vec::with_capacity(shards);
+        for _ in 0..shards {
+            maps.push(BTreeMap::new());
+        }
+        ShardedTree {
+            shards,
+            trees: maps,
+        }
     }
-    pub fn get(&self, key: Bytes) -> Option<Bytes> {
-        let mut hasher = DefaultHasher::new();
-        key.hash(&mut hasher);
-        let i = hasher.finish();
-        return self.trees[i % 4].get(key);
+    pub fn put(&mut self, key: Bytes, val: Bytes, shard: u32) {
+        self.trees[shard].insert(key, val);
+    }
+    pub fn get(&self, key: Bytes, shard: u32) -> Option<Bytes> {
+        return self.trees[shard].get(key);
     }
 }
