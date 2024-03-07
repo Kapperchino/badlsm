@@ -13,6 +13,7 @@ impl ShardedTree {
         for _ in 0..shards {
             maps.push(BTreeMap::new());
         }
+        //joe
         ShardedTree {
             shards,
             trees: maps,
