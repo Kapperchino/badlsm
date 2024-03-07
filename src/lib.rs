@@ -5,4 +5,3 @@ mod protos {
 }
 pub use protos::*;
 pub use diskstore::*;
-pub use skiplist::*;
