@@ -1,28 +1,18 @@
 use std::collections::BTreeMap;
-use std::hash::{DefaultHasher, Hash, Hasher};
-use bytes::Bytes;
 
-pub struct ShardedTree {
-    trees: Vec<BTreeMap<Bytes, Bytes>>,
-    shards: usize,
+pub struct LSMTree {
+    pub tree: BTreeMap<Vec<u8>, Vec<u8>>,
+    shard_id: usize,
 }
 
-impl ShardedTree {
-    pub fn new(shards: usize) -> Self {
-        let mut maps: Vec<BTreeMap<Bytes, Bytes>> = Vec::with_capacity(shards);
-        for _ in 0..shards {
-            maps.push(BTreeMap::new());
-        }
-        //joe
-        ShardedTree {
-            shards,
-            trees: maps,
+impl LSMTree {
+    pub fn new(shard_id: usize) -> Self {
+        LSMTree {
+            shard_id,
+            tree: BTreeMap::new(),
         }
     }
-    pub fn put(&mut self, key: Bytes, val: Bytes, shard: u32) {
-        self.trees[shard].insert(key, val);
-    }
-    pub fn get(&self, key: Bytes, shard: u32) -> Option<Bytes> {
-        return self.trees[shard].get(key);
+    pub fn put(&mut self, key: Vec<u8>, val: Vec<u8>) {
+        self.tree.insert(key, val);
     }
 }
